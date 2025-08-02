@@ -27,7 +27,7 @@ class Account {
     }
 
     async createSubscription() {
-        const webhookUrl = process.env.NODE_ENV === 'development' ? 'https://potatoes-calculator-reports-crisis.trycloudflare.com' : process.env.NEXT_PUBLIC_URL
+        const webhookUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3001'
         const res = await axios.post('https://api.aurinko.io/v1/subscriptions',
             {
                 resource: '/email/messages',
@@ -107,7 +107,7 @@ class Account {
     async performInitialSync() {
         try {
             // Start the sync process
-            const daysWithin = 3
+            const daysWithin = 40
             let syncResponse = await this.startSync(daysWithin); // Sync emails from the last 7 days
 
             // Wait until the sync is ready

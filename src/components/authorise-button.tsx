@@ -15,7 +15,7 @@ export default function AuthoriseButton() {
             Sync Emails
         </Button>
         <Button size='sm' variant={'outline'} onClick={async () => {
-            const url = await getAurinkoAuthorizationUrl('Google')
+            const url = await getAurinkoAuthorizationUrl('Office365')
             window.location.href = url
         }}>
             Authorize Email

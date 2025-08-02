@@ -349,4 +349,29 @@ export const mailRouter = createTRPCRouter({
             remainingCredits
         }
     }),
+    deleteAccount: protectedProcedure.input(z.object({
+        accountId: z.string()
+    })).mutation(async ({ ctx, input }) => {
+        // Verify the user owns this account
+        const account = await ctx.db.account.findFirst({
+            where: {
+                id: input.accountId,
+                userId: ctx.auth.userId,
+            }
+        })
+        
+        if (!account) {
+            throw new Error("Account not found or you don't have permission to delete it")
+        }
+        
+        // Delete the account - this will cascade delete all related data
+        // (threads, emails, email addresses, attachments, etc.)
+        await ctx.db.account.delete({
+            where: {
+                id: input.accountId
+            }
+        })
+        
+        return { success: true, deletedAccountId: input.accountId }
+    }),
 });

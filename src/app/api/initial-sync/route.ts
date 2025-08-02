@@ -20,7 +20,14 @@ export const POST = async (req: NextRequest) => {
     if (!dbAccount) return NextResponse.json({ error: "ACCOUNT_NOT_FOUND" }, { status: 404 });
 
     const account = new Account(dbAccount.token)
-    await account.createSubscription()
+    
+    try {
+        await account.createSubscription()
+    } catch (error) {
+        console.log('Warning: Failed to create webhook subscription:', error)
+        // Continue with sync even if webhook fails
+    }
+    
     const response = await account.performInitialSync()
     if (!response) return NextResponse.json({ error: "FAILED_TO_SYNC" }, { status: 500 });
 

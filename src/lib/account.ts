@@ -27,7 +27,7 @@ class Account {
     }
 
     async createSubscription() {
-        const webhookUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3001'
+        const webhookUrl = process.env.NEXT_PUBLIC_URL || 'https://nailbox.vercel.app'
         const res = await axios.post('https://api.aurinko.io/v1/subscriptions',
             {
                 resource: '/email/messages',

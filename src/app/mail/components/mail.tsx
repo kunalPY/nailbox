@@ -18,6 +18,7 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 import { Settings, RefreshCw, Plus, Trash2 } from "lucide-react"
+import { RadioCardGroup, RadioCardItem, RadioCardIndicator } from "@/components/ui/radio-card"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import {
@@ -51,7 +52,7 @@ export function Mail({
 }: MailProps) {
   const [done, setDone] = useLocalStorage('normalhuman-done', false)
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
-  const [accountId] = useLocalStorage('accountId', '')
+  const [accountId, setAccountId] = useLocalStorage('accountId', '')
   const [isManageOpen, setIsManageOpen] = React.useState(false)
   const [accountToDelete, setAccountToDelete] = React.useState<string | null>(null)
   
@@ -249,25 +250,38 @@ export function Mail({
             </AlertDialogDescription>
           </AlertDialogHeader>
           
-          <div className="space-y-2 py-4">
-            {accounts?.map((account) => (
-              <div key={account.id} className="flex items-center justify-between p-3 rounded-lg border">
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">{account.name}</span>
-                    <span className="text-xs text-muted-foreground">{account.emailAddress}</span>
+          <div className="py-4">
+            <RadioCardGroup 
+              value={accountId} 
+              onValueChange={setAccountId}
+              className="space-y-2"
+            >
+              {accounts?.map((account) => (
+                <RadioCardItem key={account.id} value={account.id}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <RadioCardIndicator />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">{account.name}</span>
+                        <span className="text-xs text-muted-foreground">{account.emailAddress}</span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setAccountToDelete(account.id);
+                      }}
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setAccountToDelete(account.id)}
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
+                </RadioCardItem>
+              ))}
+            </RadioCardGroup>
             
             {accounts && accounts.length === 0 && (
               <p className="text-center text-muted-foreground py-4">
